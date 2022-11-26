@@ -1,3 +1,5 @@
+--- Configure virtual environment for pylsp
+
 local P = {}
 
 -- Call each of the configured virtual environment finders until a virtual environment is found
@@ -17,6 +19,15 @@ local function add_plugins_venv_config(settings, venv)
         local plugin_settings = settings[configurator.plugin] or {}
         settings[configurator.plugin] = plugin_settings
 
+        vim.notify(
+            string.format(
+                "[pylsp_venv] Configuring pylsp plugin '%s' to use virtual environment '%s'",
+                configurator.plugin,
+                venv
+            ),
+            vim.log.levels.DEBUG
+        )
+
         configurator.configure_venv(plugin_settings, venv)
     end
 end
@@ -25,22 +36,25 @@ end
 -- Set this as the `on_new_config` hook function for `pylsp` to inject virtual
 -- environment config before a new client is set up.
 local function on_new_config(config, root_dir)
+    -- Look for a virtual environment for the project
     local venv = get_virtual_env(root_dir)
 
-    -- Do nothing if we couldn"t find a virtual environment.
+    -- Do nothing if we couldn't find a virtual environment.
     if not venv then
+        vim.notify(
+            string.format(
+                "[pylsp_venv] No virtual environment found for root directory '%s'", root_dir
+            ),
+            vim.log.levels.WARN
+        )
         return
     end
 
-    local default_settings = { pylsp = { plugins = {} } }
-
-    -- Extend the existing settings with minimal defaults, so that the configuration
-    -- functions can assume that config tables already exist for all the plugins to
-    -- configure.
+    -- Extend the existing settings with minimal defaults
     local settings = vim.tbl_deep_extend(
         "keep",
         config.settings,
-        vim.deepcopy(default_settings)
+        { pylsp = { plugins = {} } }
     )
     config.settings = settings
 

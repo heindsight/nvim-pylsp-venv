@@ -1,4 +1,4 @@
--- Find a local virtual environment in the directory.
+-- Find a local virtual environment in the given directory.
 
 local lsputil = require("lspconfig.util")
 
