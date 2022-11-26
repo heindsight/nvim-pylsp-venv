@@ -6,9 +6,9 @@ local P
 
 function P.find(root_dir)
     for _, pattern in ipairs({ "*", ".*" }) do
-        local match = vim.fn.glob(lsputil.path.join(root_dir, pattern, "pyvenv.cfg"))
-        if match ~= "" then
-            return lsputil.path.dirname(match)
+        local matches = vim.fn.glob(lsputil.path.join(root_dir, pattern, "pyvenv.cfg"), true, true)
+        if !vim.tbl_isempty(matches) then
+            return vim.fs.dirname(matches[1])
         end
     end
 
