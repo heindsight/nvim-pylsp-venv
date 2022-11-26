@@ -1,11 +1,17 @@
 local lsputil = require("lspconfig/util")
 
 local defaults = {
+    -- A list of functions for configuring various pylsp plugins.
+    pylsp_plugin_configurators = {
+        require("pylsp_venv.configurators.jedi"),
+        require("pylsp_venv.configurators.pylsp_mypy"),
+    },
+
+    -- Config to pass through to `pylsp.setup()`
     server = {},
 }
 
 local P = {}
-
 
 -- Find a virtual environment in the workspace directory.
 local function get_virtual_env(workspace)
@@ -20,17 +26,13 @@ local function get_virtual_env(workspace)
     return nil
 end
 
--- A list of functions for configuring various pylsp plugins.
-local pylsp_plugin_configurators = {
-        require("pylsp_venv.configurators.jedi"),
-        require("pylsp_venv.configurators.pylsp_mypy"),
-}
+-- Call each of the configured plugin configurators to set the virtualenv for the corresponding plugin
+local function add_plugins_venv_config(settings, venv)
+    for _, configurator in ipairs(P.config.pylsp_plugin_configurators) do
+        local plugin_settings = settings[configurator.plugin] or {}
+        settings[configurator.plugin] = plugin_settings
 
--- Iterate over the plugin configuration functions and call each on the associated
--- plugin configuration.
-local function add_plugins_venv_config(config, venv)
-    for _, configurator in ipairs(pylsp_plugin_configurators) do
-        configurator.configure_venv(config[configurator.plugin], venv)
+        configurator.configure_venv(plugin_settings, venv)
     end
 end
 
@@ -45,14 +47,7 @@ local function on_new_config(config, root_dir)
         return
     end
 
-    local default_settings = {
-        pylsp = {
-            plugins = {
-                jedi = {},
-                pylsp_mypy = {},
-            }
-        }
-    }
+    local default_settings = { pylsp = { plugins = {} } }
 
     -- Extend the existing settings with minimal defaults, so that the configuration
     -- functions can assume that config tables already exist for all the plugins to
@@ -62,10 +57,10 @@ local function on_new_config(config, root_dir)
         config.settings,
         vim.deepcopy(default_settings)
     )
+    config.settings = settings
 
     -- Update the plugin configuration
     add_plugins_venv_config(settings.pylsp.plugins, venv)
-    config.settings = settings
 end
 
 function P.setup(user_config)
