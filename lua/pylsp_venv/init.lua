@@ -1,10 +1,13 @@
-local lsputil = require("lspconfig/util")
-
 local defaults = {
-    -- A list of functions for configuring various pylsp plugins.
+    -- A list of enabled pylsp plugin configurators
     pylsp_plugin_configurators = {
         require("pylsp_venv.configurators.jedi"),
         require("pylsp_venv.configurators.pylsp_mypy"),
+    },
+
+    -- A list of enabled virtualenv finders
+    virtualenv_finders = {
+        require("pylsp_venv.finders.local_venv"),
     },
 
     -- Config to pass through to `pylsp.setup()`
@@ -13,16 +16,14 @@ local defaults = {
 
 local P = {}
 
--- Find a virtual environment in the workspace directory.
-local function get_virtual_env(workspace)
-    for _, pattern in ipairs({ "*", ".*" }) do
-        local match = vim.fn.glob(lsputil.path.join(workspace, pattern, "pyvenv.cfg"))
-        if match ~= "" then
-            return lsputil.path.dirname(match)
+-- Call each of the configured virtual environment finders until a virtual environment is found
+local function get_virtual_env(root_dir)
+    for _, finder in ipairs(P.config.virtualenv_finders) do
+        local venv = finder.find(root_dir)
+        if venv then
+            return venv
         end
     end
-
-    -- No virtual environment found.
     return nil
 end
 
