@@ -1,5 +1,9 @@
 local lsputil = require("lspconfig/util")
 
+local defaults = {
+    server = {},
+}
+
 local P = {}
 
 
@@ -33,7 +37,7 @@ end
 -- New config hook function for `lspconfig`.
 -- Set this as the `on_new_config` hook function for `pylsp` to inject virtual
 -- environment config before a new client is set up.
-function P.on_new_config(config, root_dir)
+local function on_new_config(config, root_dir)
     local venv = get_virtual_env(root_dir)
 
     -- Do nothing if we couldn"t find a virtual environment.
@@ -62,6 +66,23 @@ function P.on_new_config(config, root_dir)
     -- Update the plugin configuration
     add_plugins_venv_config(settings.pylsp.plugins, venv)
     config.settings = settings
+end
+
+function P.setup(user_config)
+    user_config = user_config or {}
+
+    P.config = vim.tbl_deep_extend("force", vim.deepcopy(defaults), user_config)
+
+    local user_on_new_config = P.config.server.on_new_config
+
+    P.config.server.on_new_config = function(...)
+        if user_on_new_config then
+            user_on_new_config(...)
+        end
+        on_new_config(...)
+    end
+
+    require("lspconfig").pylsp.setup(P.config.server)
 end
 
 return P
