@@ -16,46 +16,17 @@ local function get_virtual_env(workspace)
     return nil
 end
 
--- Get the path for the python executable in a virtual environment.
-local function get_venv_python(venv)
-    local bin_dir
-    if vim.fn.has("unix") then
-        bin_dir = "bin"
-    else
-        bin_dir = "Scripts"
-    end
-
-    return lsputil.path.join(venv, bin_dir, "python")
-end
-
--- A table of functions for configuring various pylsp plugins.
-local configure_plugins = {
-    -- Configure the python executable for the pylsp_mypy plugin.
-    pylsp_mypy = function(config, venv)
-        if not config.overrides then
-            config.overrides = { true }
-        elseif vim.tbl_contains(config.overrides, "--python-executable") then
-            return
-        end
-
-        vim.list_extend(config.overrides, { "--python-executable", get_venv_python(venv) })
-    end,
-
-    -- Configure the virtual environment for the pylsp jedi plugin.
-    jedi = function(config, venv)
-        if config.environment then
-            return
-        end
-        config.environment = venv
-    end
+-- A list of functions for configuring various pylsp plugins.
+local pylsp_plugin_configurators = {
+        require("pylsp_venv.configurators.jedi"),
+        require("pylsp_venv.configurators.pylsp_mypy"),
 }
 
 -- Iterate over the plugin configuration functions and call each on the associated
 -- plugin configuration.
 local function add_plugins_venv_config(config, venv)
-    for plugin in pairs(configure_plugins) do
-        local configurator = configure_plugins[plugin]
-        configurator(config[plugin], venv)
+    for _, configurator in ipairs(pylsp_plugin_configurators) do
+        configurator.configure_venv(config[configurator.plugin], venv)
     end
 end
 
