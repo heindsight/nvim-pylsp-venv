@@ -7,6 +7,8 @@ local P = {}
 P.plugin = "pylsp_mypy"
 
 function P.configure_venv(config, venv)
+    util.validate_configurator_args(config, venv)
+
     if not config.overrides then
         config.overrides = { true }
     elseif vim.tbl_contains(config.overrides, "--python-executable") then

@@ -17,4 +17,12 @@ function P.get_venv_python(venv)
     error(string.format("[pylsp_venv] No python executable found in '%s'", venv))
 end
 
+-- Validate plugin configurator arguments
+function P.validate_configurator_args(config, venv)
+    vim.validate {
+        config = { config, "t" },
+        venv = { venv, "s" },
+    }
+end
+
 return P
