@@ -6,14 +6,15 @@ local P = {}
 
 -- Get the path for the python executable in a virtual environment.
 function P.get_venv_python(venv)
-    local bin_dir
-    if vim.fn.has("unix") then
-        bin_dir = "bin"
-    else
-        bin_dir = "Scripts"
-    end
+    local py_paths = { {"bin", "python"}, {"Scripts", "python.exe"}}
 
-    return lsputil.path.join(venv, bin_dir, "python")
+    for _, python in ipairs(py_paths) do
+        local venv_python = lsputil.path.join(venv, table.unpack(python))
+        if lsputil.path.is_file(venv_python) then
+            return venv_python
+        end
+    end
+    error(string.format("[pylsp_venv] No python executable found in '%s'", venv))
 end
 
 return P
