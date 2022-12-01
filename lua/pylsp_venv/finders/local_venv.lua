@@ -1,19 +1,12 @@
 -- Find a local virtual environment in the given directory.
 
-local lsputil = require("lspconfig.util")
+local util = require("pylsp_venv.util")
 
-local P
+local P = {}
 
 function P.find(root_dir)
-    for _, pattern in ipairs({ "*", ".*" }) do
-        local matches = vim.fn.glob(lsputil.path.join(root_dir, pattern, "pyvenv.cfg"), true, true)
-        if !vim.tbl_isempty(matches) then
-            return vim.fs.dirname(matches[1])
-        end
-    end
-
-    -- No virtual environment found.
-    return nil
+    local venvs = util.find_virtual_environments(root_dir)
+    return venvs[1]
 end
 
 return P

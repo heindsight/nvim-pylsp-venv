@@ -12,7 +12,7 @@ function P.configure_venv(config, venv)
     if config.environment then
         return
     end
-    config.environment = venv
+    config.environment = venv.path
 end
 
 return P

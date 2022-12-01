@@ -15,8 +15,7 @@ function P.configure_venv(config, venv)
         return
     end
 
-    local python_exe = util.get_venv_python(venv)
-    vim.list_extend(config.overrides, { "--python-executable", python_exe })
+    vim.list_extend(config.overrides, { "--python-executable", venv.python_exe })
 end
 
 return P

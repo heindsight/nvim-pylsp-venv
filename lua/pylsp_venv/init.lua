@@ -23,7 +23,7 @@ local function add_plugins_venv_config(settings, venv)
             string.format(
                 "[pylsp_venv] Configuring pylsp plugin '%s' to use virtual environment '%s'",
                 configurator.plugin,
-                venv
+                venv.path
             ),
             vim.log.levels.DEBUG
         )
