@@ -23,4 +23,4 @@ spec: rocks plugins
 clean:
 	@[ -z "$$(git status --short)" ] \
 		&& git clean -xffd \
-		|| echo "There are uncommitted changes. Not cleaning."
+		|| printf "There are uncommitted changes. Not cleaning." >&2
