@@ -1,23 +1,29 @@
-.PHONY: rocks plugins spec clean
+.PHONY: clean coverage plugins rocks spec
 
-rocks: .luarocks/bin/vusted
+rocks: .luarocks/lib/luarocks/rocks-5.1/vusted
+rocks: .luarocks/lib/luarocks/rocks-5.1/luacov
+rocks: .luarocks/lib/luarocks/rocks-5.1/luafilesystem
+
+
+.luarocks/lib/luarocks/rocks-5.1/%:
+	luarocks --tree .luarocks --lua-version=5.1 install $@
 
 
 plugins: fixtures/plugins/nvim-lspconfig
-
-
-.luarocks/bin/vusted:
-	luarocks --tree .luarocks --lua-version=5.1 install vusted
 
 
 fixtures/plugins/nvim-lspconfig:
 	git clone https://github.com/neovim/nvim-lspconfig.git $@
 
 
+spec: LUA_PATH:=$(LUA_PATH);fixtures/plugins/nvim-lspconfig/lua/?.lua
 spec: rocks plugins
-	eval $$(luarocks --tree .luarocks --lua-version=5.1 path) \
-		&& LUA_PATH="$${LUA_PATH};fixtures/nvim-lspconfig/lua/?.lua" \
-		&& vusted
+	vusted $(ARGS)
+
+
+coverage: ARGS+=-c
+coverage: spec
+	@cat luacov.report.out
 
 
 clean:
