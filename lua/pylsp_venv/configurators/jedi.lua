@@ -1,6 +1,6 @@
 -- Configure the virtual environment for the pylsp jedi plugin.
 
-local util = require("pylsp_venv.util")
+local util = require "pylsp_venv.util"
 
 local P = {}
 

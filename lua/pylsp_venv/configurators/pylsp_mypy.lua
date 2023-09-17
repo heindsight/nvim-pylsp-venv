@@ -1,6 +1,6 @@
 -- Configure the python executable for the pylsp_mypy plugin.
 
-local util = require("pylsp_venv.util")
+local util = require "pylsp_venv.util"
 
 local P = {}
 

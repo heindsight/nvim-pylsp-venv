@@ -1,8 +1,8 @@
 -- Look for a virtualenvwrapper virtual environment with .project file pointing to the given root directory
 
-local lsputil = require("lspconfig.util")
+local lsputil = require "lspconfig.util"
 
-local util = require("pylsp_venv.util")
+local util = require "pylsp_venv.util"
 
 local P = {}
 
@@ -21,7 +21,7 @@ function P.find(root_dir)
     for _, venv in ipairs(venvs) do
         local project_file = vim.fn.glob(lsputil.path.join(venv.path, ".project"), true, false)
         if project_file ~= "" then
-            local lines = vim.fn.readfile(project_file, '', 1)
+            local lines = vim.fn.readfile(project_file, "", 1)
             if lines[1] == root_dir then
                 return venv
             end

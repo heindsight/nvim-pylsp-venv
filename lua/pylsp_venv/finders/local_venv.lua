@@ -1,6 +1,6 @@
 -- Find a local virtual environment in the given directory.
 
-local util = require("pylsp_venv.util")
+local util = require "pylsp_venv.util"
 
 local P = {}
 
