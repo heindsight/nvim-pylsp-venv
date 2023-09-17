@@ -21,6 +21,8 @@ format:
 
 coverage: ARGS+=-c
 coverage: spec
+	@luacov-cobertura -o coverage.xml
+	@rm luacov.stats.out
 	@cat luacov.report.out
 
 

@@ -39,14 +39,16 @@ luac.out
 *.x86_64
 *.hex
 
-# Lua rocks
-.luarocks/**
-!.luarocks/.gitkeep
-
 # Test fixtures
 fixtures/plugins/**
 !fixtures/plugins/.gitkeep
 !fixtures/data/**
 
+# Lua rocks
 /lua_modules
 /.luarocks
+
+# Coverage
+coverage.xml
+luacov.report.out
+luacov.stats.out

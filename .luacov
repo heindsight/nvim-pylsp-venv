@@ -26,7 +26,4 @@ includeuntestedfiles = true
 -- Run reporter on test-run completion
 runreport = true
 
--- Delete the stats file after reporting (don't accumulate coverage over multiple runs)
-deletestats = true
-
 -- vim:ft=lua
