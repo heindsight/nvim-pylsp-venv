@@ -13,9 +13,10 @@ include = {
    "spec",
 }
 
--- Exclude fixtures from coverage report
+-- Exclude fixtures and spec helpers from coverage report
 exclude = {
    "fixtures",
+   "spec.helpers",
 }
 
 -- Include files not loaded in tests in coverage report
