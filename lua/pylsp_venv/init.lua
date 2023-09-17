@@ -102,15 +102,10 @@ local function on_new_config(cfg, root_dir)
     end
 
     -- Extend the existing settings with minimal defaults
-    local settings = vim.tbl_deep_extend(
-        "keep",
-        cfg.settings,
-        { pylsp = { plugins = {} } }
-    )
-    cfg.settings = settings
+    cfg.settings = vim.tbl_deep_extend("keep", cfg.settings, { pylsp = { plugins = {} } })
 
     -- Update the plugin configuration
-    add_plugins_venv_config(settings.pylsp.plugins, venv)
+    add_plugins_venv_config(cfg.settings.pylsp.plugins, venv)
 end
 
 function P.setup(user_config)
