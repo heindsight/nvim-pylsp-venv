@@ -1,25 +1,23 @@
-.PHONY: clean coverage plugins rocks spec
+.PHONY: clean coverage format lint spec test_setup
 
-rocks: .luarocks/lib/luarocks/rocks-5.1/vusted
-rocks: .luarocks/lib/luarocks/rocks-5.1/luacov
-rocks: .luarocks/lib/luarocks/rocks-5.1/luafilesystem
+LUA_PATH:=$(LUA_PATH);fixtures/plugins/nvim-lspconfig/lua/?.lua
 
 
-.luarocks/lib/luarocks/rocks-5.1/%:
-	luarocks --tree .luarocks --lua-version=5.1 install $@
+test_setup:
+	scripts/test_setup.sh
 
 
-plugins: fixtures/plugins/nvim-lspconfig
+lint:
+	luacheck lua/ spec/
+	selene lua/ spec/
+	stylua --check lua/ spec/
 
-
-fixtures/plugins/nvim-lspconfig:
-	git clone https://github.com/neovim/nvim-lspconfig.git $@
-
-
-spec: LUA_PATH:=$(LUA_PATH);fixtures/plugins/nvim-lspconfig/lua/?.lua
-spec: rocks plugins
+spec:
 	vusted $(ARGS)
 
+
+format:
+	stylua lua/ spec/
 
 coverage: ARGS+=-c
 coverage: spec
@@ -28,5 +26,5 @@ coverage: spec
 
 clean:
 	@[ -z "$$(git status --short)" ] \
-		&& git clean -xffd \
-		|| printf "There are uncommitted changes. Not cleaning." >&2
+		&& git clean -ffd \
+		|| printf "There are uncommitted changes. Not cleaning.\n" >&2

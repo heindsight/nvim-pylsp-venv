@@ -47,3 +47,6 @@ luac.out
 fixtures/plugins/**
 !fixtures/plugins/.gitkeep
 !fixtures/data/**
+
+/lua_modules
+/.luarocks
