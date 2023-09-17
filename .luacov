@@ -16,7 +16,7 @@ include = {
 -- Exclude fixtures and spec helpers from coverage report
 exclude = {
    "fixtures",
-   "lua_modules",
+   ".luarocks",
    "spec.helpers",
 }
 

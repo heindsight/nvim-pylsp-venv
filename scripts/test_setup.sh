@@ -16,7 +16,7 @@ main() {
 install_rocks() {
   while read rock; do
     if [ "${rock}" = "${rock###}" ]; then
-      luarocks --lua-version=5.1 install ${rock}
+      luarocks --lua-version=5.1 --tree=.luarocks install ${rock}
     fi
   done < test_rocks.txt
 }
