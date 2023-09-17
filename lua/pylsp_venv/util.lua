@@ -1,11 +1,11 @@
 -- Useful helper functions
 
-local lsputil = require("lspconfig.util")
+local lsputil = require "lspconfig.util"
 
 local P = {}
 
 -- Get the path for the python executable in a virtual environment.
-function P.get_venv_python(venv_path)
+local function get_venv_python(venv_path)
     local py_paths = { "bin/python", "Scripts/python.exe" }
 
     for _, python in ipairs(py_paths) do
@@ -17,8 +17,12 @@ function P.get_venv_python(venv_path)
     return nil
 end
 
+-- Get details of a virtual environment
+--
+-- Params:
+--  venv_path: (string) The virtual environment path.
 function P.get_venv_info(venv_path)
-    local python_exe = P.get_venv_python(venv_path)
+    local python_exe = get_venv_python(venv_path)
 
     if not python_exe then
         -- No python executable found, looks like a broken venv.
@@ -36,55 +40,21 @@ end
 --
 -- Params:
 --  dir: (string) The directotory to search
---  options: (table) optional keyword arguments
---      - recurse: (boolean, default false): If true, search recursively
---      - blacklist (table - list of lua patterns) Exclude matching names from results
---      - whitlelist (table - list of lua patterns) Only include matching names in results
---  Only one of 'blacklist' and 'whitelist' should be used, if both are present,
---  'blacklist' will be ignored.
-function P.find_virtual_environments(dir, options)
-    local defaults = {
-        recurse = false,
-        order_by = {"name", "path"}
-    }
-
-    options = options or {}
-    vim.validate {
-        recurse = { options.recurse, "b", true },
-        order_by = {options.order_by, "t", true },
-    }
-    for _, order_item in ipairs(options.order_by or {}) do
-        vim.validate { item = {order_item, "s"}}
-    end
-
-    options = vim.tbl_deep_extend("keep", options, defaults)
-
-    local star = "*"
-    if options.recurse then
-        star = "**"
-    end
-
+function P.find_virtual_environments(dir)
     local found_venvs = {}
 
-    for _, pattern_pfx in ipairs({ "", ".[^.]" }) do
-        local pattern = lsputil.path.join(dir, pattern_pfx .. star, "pyvenv.cfg")
+    for _, pattern_pfx in ipairs { "*", ".[^.]*" } do
+        local pattern = lsputil.path.join(dir, pattern_pfx, "pyvenv.cfg")
         local venv_paths = vim.tbl_map(vim.fs.dirname, vim.fn.glob(pattern, true, true))
         local venvs = vim.tbl_map(P.get_venv_info, venv_paths)
         vim.list_extend(found_venvs, venvs)
     end
 
-    local function cmp(venv_a, venv_b)
-        for _, item in ipairs(options.order_by) do
-            if venv_a[item] < venv_b[item] then
-                return true
-            elseif venv_a[item] > venv_b[item] then
-                return false
-            end
-        end
-        return false
+    local function cmp_name(venv_a, venv_b)
+        return venv_a.name < venv_b.name
     end
 
-    table.sort(found_venvs, cmp)
+    table.sort(found_venvs, cmp_name)
 
     return found_venvs
 end

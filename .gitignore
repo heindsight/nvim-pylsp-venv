@@ -46,3 +46,4 @@ luac.out
 # Test fixtures
 fixtures/plugins/**
 !fixtures/plugins/.gitkeep
+!fixtures/data/**
