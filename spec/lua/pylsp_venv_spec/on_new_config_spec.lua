@@ -143,8 +143,8 @@ describe("pylsp_venv on_new_config", function()
 
         on_new_config(lsp_config, "root_dir")
 
-        assert.spy(user_config.virtualenv_finders[1].find).called_with("root_dir")
-        assert.spy(user_config.virtualenv_finders[2].find).called_with("root_dir")
+        assert.spy(user_config.virtualenv_finders[1].find).called_with "root_dir"
+        assert.spy(user_config.virtualenv_finders[2].find).called_with "root_dir"
         assert.spy(user_config.virtualenv_finders[3].find).not_called()
 
         assert
