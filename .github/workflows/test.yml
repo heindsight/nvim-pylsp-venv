@@ -45,4 +45,3 @@ jobs:
           minimum_coverage: 100
           fail_below_threshold: true
           show_line: true
-          report_name: "Coverage: ${{ matrix.os }}"
