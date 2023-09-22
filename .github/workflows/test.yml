@@ -1,0 +1,48 @@
+name: test
+
+on:
+  pull_request:
+    branches:
+      - '*'
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    name: Run Test
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: rhysd/action-setup-vim@v1
+        with:
+          neovim: true
+
+      - name: luajit
+        uses: leafo/gh-actions-lua@v10
+        with:
+          luaVersion: "luajit"
+
+      - name: luarocks
+        uses: leafo/gh-actions-luarocks@v4
+
+      - name: run tests
+        run: make spec
+
+      - name: Generate cobertura coverage report
+        if: matrix.os == 'ubuntu-latest'
+        run: make cobertura
+
+      - name: Upload coverage report
+        uses: 5monkeys/cobertura-action@v13
+        if: matrix.os == 'ubuntu-latest'
+        with:
+          path: coverage.xml
+          skip_covered: false
+          minimum_coverage: 100
+          fail_below_threshold: true
+          show_line: true

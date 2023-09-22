@@ -1,0 +1,39 @@
+---
+base: lua51
+
+globals:
+  vim:
+    any: true
+  assert:
+    args:
+      - type: bool
+      - type: string
+        required: false
+  after_each:
+    args:
+      - type: function
+  before_each:
+    args:
+      - type: function
+  describe:
+    args:
+      - type: string
+      - type: function
+  it:
+    args:
+      - type: string
+      - type: function
+  setup:
+    args:
+      - type: function
+  teardown:
+    args:
+      - type: function
+  stub:
+    args:
+      - type: table
+      - type: function
+  mock:
+    args:
+      - type: table
+      - type: bool

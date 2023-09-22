@@ -1,0 +1,30 @@
+local lfs = require("lfs")
+local cwd = lfs.currentdir()
+
+-- Include pylsp_venv modules in coverage report
+modules = {
+   ["pylsp_venv"] = cwd .. "/lua/pylsp_venv/init.lua",
+   ["pylsp_venv.*"] = cwd .. "/lua",
+   ["pylsp_venv.*.*"] = cwd .. "/lua/",
+}
+
+-- Include spec modules in coverage report
+include = {
+   "spec",
+}
+
+-- Exclude fixtures and spec helpers from coverage report
+exclude = {
+   "fixtures",
+   ".luarocks",
+   "lua_modules",
+   "spec.helpers",
+}
+
+-- Include files not loaded in tests in coverage report
+includeuntestedfiles = true
+
+-- Run reporter on test-run completion
+runreport = true
+
+-- vim:ft=lua

@@ -39,3 +39,13 @@ luac.out
 *.x86_64
 *.hex
 
+# Lua rocks
+/luarocks
+/lua_modules
+/.luarocks
+
+# Coverage
+coverage.xml
+luacov.report.out
+luacov.stats.out
+/lua
