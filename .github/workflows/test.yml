@@ -30,11 +30,12 @@ jobs:
       - name: luarocks
         uses: leafo/gh-actions-luarocks@v4
 
-      - name: test setup
-        run: make test_setup
-
       - name: run tests
-        run: make coverage
+        run: make spec
+
+      - name: Generate coverage report
+        if: matrix.os == 'ubuntu-latest'
+        run: make coverage-report
 
       - name: Upload coverage report
         uses: 5monkeys/cobertura-action@v13

@@ -17,6 +17,7 @@ include = {
 exclude = {
    "fixtures",
    ".luarocks",
+   "lua_modules",
    "spec.helpers",
 }
 

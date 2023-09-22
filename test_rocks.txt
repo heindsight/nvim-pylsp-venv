@@ -1,6 +1,0 @@
-# Lua rocks (one per line, with optional version) required for tests
-luacheck
-luacov
-luacov-cobertura
-luafilesystem
-vusted

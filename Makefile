@@ -1,32 +1,36 @@
-.PHONY: clean coverage format lint spec test_setup
+.PHONY: clean cobertura coverage coverage-report format lint spec
 
-LUA_PATH:=$(LUA_PATH);fixtures/plugins/nvim-lspconfig/lua/?.lua
-
-
-test_setup:
-	scripts/test_setup.sh
-
+export PATH := $(PWD)/lua_modules/bin:$(PATH)
 
 lint:
 	luacheck lua/ spec/
 	selene lua/ spec/
 	stylua --check lua/ spec/
 
-spec:
-	vusted $(ARGS)
-
 
 format:
-	stylua lua/ spec/
+	@stylua lua/ spec/
 
-coverage: ARGS+=-c
-coverage: spec
-	@luacov-cobertura -o coverage.xml
-	@rm luacov.stats.out
+
+spec:
+	@luarocks-5.1 --lua-version=5.1 test
+
+
+coverage-report:
+	@luacov
 	@cat luacov.report.out
 
 
+coverage: spec coverage-report
+
+
+cobertura:
+	@luacov-cobertura -o coverage.xml
+
+
 clean:
+	@rm -f luacov.*.out
+	@rm coverage.xml
 	@[ -z "$$(git status --short)" ] \
 		&& git clean -ffd \
 		|| printf "There are uncommitted changes. Not cleaning.\n" >&2

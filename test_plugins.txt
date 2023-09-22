@@ -1,2 +1,0 @@
-# Git repo URLs for (neo)vim plugins required for tests
-https://github.com/neovim/nvim-lspconfig.git
