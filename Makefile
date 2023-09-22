@@ -13,7 +13,7 @@ format:
 
 
 spec:
-	@luarocks-5.1 --lua-version=5.1 test
+	@luarocks --lua-version=5.1 test
 
 
 coverage-report:
@@ -30,7 +30,7 @@ cobertura:
 
 clean:
 	@rm -f luacov.*.out
-	@rm coverage.xml
+	@rm -f coverage.xml
 	@[ -z "$$(git status --short)" ] \
 		&& git clean -ffd \
 		|| printf "There are uncommitted changes. Not cleaning.\n" >&2
